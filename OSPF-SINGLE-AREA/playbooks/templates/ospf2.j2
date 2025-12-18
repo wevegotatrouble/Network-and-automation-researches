@@ -1,0 +1,26 @@
+ospf_processes:
+{% for process in ospf_processes %}
+  - process_id: {{ process.process_id }}
+    router_id: "{{ process.router_id }}"
+    networks:
+{% for net in process.get('network', []) %}
+      - address: "{{ net.address }}"
+        area: "{{ net.area }}"
+        wildcard_bits: "{{ net.wildcard_bits }}"
+{% endfor %}
+{% endfor %}
+
+
+ospf_interfaces:
+{% for interface in ospf_interfaces %}
+  - name: {{ interface.name }}
+{% for data in interface.get('address_family', []) %}
+{% if data.priority is defined %}
+    priority: "{{ data.priority }}"
+{% endif %}
+{% if data.get('process') is iterable %}
+    area: "{{ data.process.area_id }}"
+    process_id: "{{ data.process.id }}"
+{% endif %}
+{% endfor %}
+{% endfor %}

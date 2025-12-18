@@ -1,0 +1,13 @@
+---
+- name: Gather different cisco facts which you need it
+  hosts: OSPF-SINGLE-AREA
+  gather_facts: false
+  tasks:
+    - name: Gather ospf configs
+      cisco.ios.ios_facts:
+        gather_subset: ['!all', '!min']
+        gather_network_resources: [ospf_interfaces]
+      register: cisco_facts
+    - name: Display facts output
+      debug:
+        var: cisco_facts.ansible_facts.ansible_network_resources
