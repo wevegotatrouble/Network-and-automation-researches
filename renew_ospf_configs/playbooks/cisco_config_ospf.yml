@@ -1,0 +1,27 @@
+---
+- name: Assign new OSPF configurations
+  hosts: OSPF-SINGLE-AREA
+  gather_facts: false
+  tasks:
+    - name: commit new OSPF config for interfaces priorities
+      cisco.ios.ios_ospf_interfaces:
+        config:
+          - name: '{{ item. name}}'
+            address_family:
+              - afi: ipv4
+                priority: '{{ item.priority }}'
+        state: merged
+      loop: '{{ ospf_interfaces| default([]) }}'
+      when: item.priority is defined
+    - name: commit new OSPF config for interfaces
+      cisco.ios.ios_ospf_interfaces:
+        config:
+          - name: '{{ item.name }}'
+            address_family:
+              - afi: ipv4
+                process:
+                  id: '{{ item.process_id }}'
+                  area_id: '{{ item.area }}'
+        state: merged
+      loop: '{{ ospf_interfaces| default([]) }}'
+      when: [item.area is defined, item.process_id is defined]

@@ -1,0 +1,8 @@
+[OSPF-SINGLE-AREA]
+DSW1 ansible_host=192.168.47.72 
+DSW2 ansible_host=192.168.47.212
+R3 ansible_host=192.168.47.104
+R4 ansible_host=192.168.47.196
+R5 ansible_host=192.168.47.140
+R6 ansible_host=192.168.47.36
+R7 ansible_host=192.168.47.144

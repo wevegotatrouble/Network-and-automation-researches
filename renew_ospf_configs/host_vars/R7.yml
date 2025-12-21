@@ -1,0 +1,18 @@
+ospf_processes:
+  - process_id: 5
+    router_id: "7.7.7.7"
+    networks:
+
+
+ospf_interfaces:
+  - name: Loopback0
+    area: "0"
+    process_id: "5"
+  - name: Ethernet0/0
+    area: "0"
+    process_id: "5"
+  - name: Ethernet0/1
+  - name: Ethernet0/2
+  - name: Ethernet0/3
+    area: "0"
+    process_id: "5"

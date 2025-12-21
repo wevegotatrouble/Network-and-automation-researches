@@ -1,0 +1,5 @@
+---
+- import_playbook: cisco_delete_ospf.yml
+- import_playbook: cisco_config_ospf.yml
+- import_playbook: deploy_ospf_cisco.yml
+- import_playbook: show_ospf_config.yml

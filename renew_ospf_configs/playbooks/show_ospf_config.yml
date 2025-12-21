@@ -1,0 +1,21 @@
+---
+- name: Assign new OSPF configurations
+  hosts: OSPF-SINGLE-AREA
+  gather_facts: false
+  tasks:
+    - name: gather OSPF configurations
+      cisco.ios.ios_command:
+        commands:
+          - show ip ospf
+          - show ip ospf neighbor
+          - show ip ospf interface
+          - show ip ospf database
+          - show ip ospf rib
+          - show ip route
+          - show ip route ospf
+          - show ip protocols
+          - show run | s ospf
+      register: output
+    - name: show OSPF configurations
+      debug:
+        msg: '{{ output.stdout_lines }}'

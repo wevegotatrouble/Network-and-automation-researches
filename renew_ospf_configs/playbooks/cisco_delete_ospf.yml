@@ -1,0 +1,11 @@
+---
+- name: delete and assign new OSPF configurations
+  hosts: OSPF-SINGLE-AREA
+  gather_facts: false
+  tasks:
+    - name: delete all OSPF config from interfaces
+      cisco.ios.ios_ospf_interfaces:
+        state: deleted
+    - name: delete all OSPF processes
+      cisco.ios.ios_ospfv2:
+        state: deleted
