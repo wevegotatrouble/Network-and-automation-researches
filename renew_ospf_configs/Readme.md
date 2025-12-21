@@ -44,5 +44,5 @@ Let's get started
 - you can see that we use cisco_command module
 - all these commands which we use they used for OSPF verification workflow
   ![](https://cdn.networkacademy.io/sites/default/files/2024-07/ospf-verification-workflow.svg)
-  Finally, you may check and run `renew_show_ospf_cisco_config.yml`. This playbook you can run if you changed OSPF networks and OSPF interfaces in your host_vars. We just imported all playbook that you've considered before.
 
+  Finally, you may check and run `renew_show_ospf_cisco_config.yml`. This playbook you can run if you changed OSPF networks and OSPF interfaces in your host_vars. We just imported all playbook that you've considered before.
