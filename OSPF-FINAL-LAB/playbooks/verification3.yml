@@ -1,0 +1,15 @@
+---
+- name: Traceroute to PC3 from SRV1
+  hosts: SRV1
+  gather_facts: false
+  tasks:
+    - name: traceroute PC3
+      cisco.ios.ios_command:
+        commands: traceroute 10.32.1.1
+      register: output
+    - name: show traceroute output
+      debug:
+        var: output
+    - name: Time to check a verification
+      pause:
+        seconds: 10

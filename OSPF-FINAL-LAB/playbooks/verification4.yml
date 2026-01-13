@@ -1,0 +1,15 @@
+---
+- name: Check the Internet connection
+  hosts: R7
+  gather_facts: false
+  tasks:
+    - name: Ping the Internet
+      cisco.ios.ios_ping:
+        dest: 8.8.8.8
+      register: output
+    - name: show ping output
+      debug:
+        var: output
+    - name: Time to check a verification
+      pause:
+        seconds: 10

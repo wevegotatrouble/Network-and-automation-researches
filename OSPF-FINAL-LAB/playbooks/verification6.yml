@@ -1,0 +1,17 @@
+---
+- name: Show ospf neighbors
+  hosts: R4
+  gather_facts: false
+  tasks:
+    - name: Run show ip ospf interface command on R4
+      cisco.ios.ios_command:
+        commands:
+          - command: show ip ospf interface eth0/3
+      register: output
+    - name: The show ip ospf interface command on R4 must show that the Hello/Dead
+        intervals on 10.1.4.0/24 are 1/4 seconds.
+      debug:
+        var: output
+    - name: Time to check a verification
+      pause:
+        seconds: 10

@@ -1,0 +1,17 @@
+---
+- name: Show ip route on R7
+  hosts: R7
+  gather_facts: false
+  tasks:
+    - name: Run show ip route command on R7
+      cisco.ios.ios_command:
+        commands:
+          - command: show ip route 1.1.1.250
+      register: output
+    - name: The show ip route 1.1.1.250 on R7 must show that the network 1.1.1.128/25
+        is in the routing table.
+      debug:
+        var: output
+    - name: Time to check a verification
+      pause:
+        seconds: 10

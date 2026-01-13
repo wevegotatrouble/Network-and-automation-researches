@@ -1,0 +1,17 @@
+---
+- name: Gather ospf configs in host vars
+  hosts: OSPF-SINGLE-AREA
+  gather_facts: false
+  tasks:
+    - name: Gather OSPF configs facts
+      cisco.ios.ios_facts:
+        gather_subset: ['!all', '!min']
+        gather_network_resources: [ospfv2, ospf_interfaces]
+      register: cisco_facts
+    - name: Format OSPF configs (Cisco)
+      template:
+        src: templates/ospf2.j2
+        dest: host_vars/{{ inventory_hostname }}.yml
+      vars:
+        ospf_processes: '{{ cisco_facts.ansible_facts.ansible_network_resources.ospfv2.processes }}'
+        ospf_interfaces: '{{ cisco_facts.ansible_facts.ansible_network_resources.ospf_interfaces }}'

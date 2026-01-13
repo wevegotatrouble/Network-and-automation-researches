@@ -1,0 +1,7 @@
+{% for item in ospf_interfaces %}
+{% if item.hello_interval is defined and item.dead_interval is defined %}
+interface {{ item.name }}
+ ip ospf hello-interval {{ item.hello_interval }}
+ ip ospf dead-interval {{ item.dead_interval }}
+{% endif %}
+{% endfor %}

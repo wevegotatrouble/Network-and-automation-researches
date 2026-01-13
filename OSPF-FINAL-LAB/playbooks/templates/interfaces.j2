@@ -1,0 +1,6 @@
+{% if interfaces is defined %}
+{% for item in interfaces %}
+interface {{ item.name }}
+ ip address {{ item.ip }} {{ item.subnet_mask }}
+{% endfor %}
+{% endif %}

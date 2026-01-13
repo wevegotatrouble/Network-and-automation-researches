@@ -1,0 +1,17 @@
+router ospf {{ ospf_process.process_id }}
+ router-id {{ ospf_process.router_id }}
+ auto-cost reference-bandwidth {{ ospf_process.reference_bandwidth }}
+{% if ospf_process.passive_interface is undefined %}
+{% else %}
+ passive-interface {{ ospf_process.passive_interface}}
+{% if ospf_process.default_information_originate is undefined %}
+{% else %}
+default-information originate {{ ospf_process.default_information_originate }} 
+{% endif %}
+{% endif %}
+{% if ospf_process.networks is undefined %}
+{% else %}
+{% for network in ospf_process.networks %}
+ network {{ network.address }} {{ network.wildcard_bits }} area {{ network.area }}
+{% endfor %}
+{% endif %}

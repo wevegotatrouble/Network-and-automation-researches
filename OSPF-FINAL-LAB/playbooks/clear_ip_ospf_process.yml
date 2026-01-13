@@ -1,0 +1,20 @@
+---
+- name: Clear IP OSPF Process
+  hosts: OSPF-SINGLE-AREA
+  gather_facts: false
+  vars:
+    ansible_command_timeout: 120
+  tasks:
+    - name: Clear OSPF process
+      cisco.ios.ios_command:
+        commands:
+          - command: clear ip ospf process
+            prompt: Reset ALL OSPF processes
+            answer: 'yes'
+        wait_for: ['result[0] contains Reset']
+      register: result
+      ignore_errors: true
+    - name: Wait for OSPF to stabilize
+      pause:
+        seconds: 60
+        prompt: Waiting for OSPF adjacencies to re-establish...

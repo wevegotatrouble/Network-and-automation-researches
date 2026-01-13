@@ -1,0 +1,19 @@
+ospf_processes:
+  - process_id: 1
+    router_id: "2.2.2.2"
+    networks:
+      - address: "2.2.2.2"
+        area: "0"
+        wildcard_bits: "0.0.0.0"
+      - address: "10.0.0.0"
+        area: "0"
+        wildcard_bits: "0.255.255.255"
+
+
+ospf_interfaces:
+  - name: Loopback0
+  - name: Ethernet0/0
+  - name: Ethernet0/1
+    priority: "5"
+  - name: Ethernet0/2
+  - name: Ethernet0/3

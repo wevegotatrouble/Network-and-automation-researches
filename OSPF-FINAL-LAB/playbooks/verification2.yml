@@ -1,0 +1,15 @@
+---
+- name: Ping from SRV1 to PC3
+  hosts: SRV1
+  gather_facts: false
+  tasks:
+    - name: Ping PC3
+      cisco.ios.ios_ping:
+        dest: 10.32.1.1
+      register: output
+    - name: show ping output
+      debug:
+        var: output
+    - name: Time to check a verification
+      pause:
+        seconds: 10

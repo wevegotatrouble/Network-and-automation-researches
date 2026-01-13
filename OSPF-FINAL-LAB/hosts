@@ -1,0 +1,12 @@
+[OSPF-SINGLE-AREA]
+R1 ansible_host=<<type your own address>>
+R2 ansible_host=<<type your own address>>
+R3 ansible_host=<<type your own address>>
+R4 ansible_host=<<type your own address>>
+R5 ansible_host=<<type your own address>>
+R6 ansible_host=<<type your own address>>
+R7 ansible_host=<<type your own address>>
+SRV1 ansible_host=<<type your own address>>
+SRV2 ansible_host=<<type your own address>>
+PC3 ansible_host=<<type your own address>>
+PC4 ansible_host=<<type your own address>>

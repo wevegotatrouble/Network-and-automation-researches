@@ -1,0 +1,16 @@
+---
+ospf_processes:
+  - process_id: 1
+    reference_bandwidth: 1000000
+    router_id: 6.6.6.6
+ospf_interfaces:
+  - name: Loopback0
+  - name: Ethernet0/0
+    area: '0'
+    process_id: '1'
+  - name: Ethernet0/1
+  - name: Ethernet0/2
+    network_type: point-to-point
+    area: '0'
+    process_id: '1'
+  - name: Ethernet0/3

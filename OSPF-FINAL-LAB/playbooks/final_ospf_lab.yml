@@ -1,0 +1,13 @@
+---
+- import_playbook: deploy_ospf_cisco.yml
+- import_playbook: cisco_config_ospf.yml
+- import_playbook: cisco_assign_interfaces.yml
+- import_playbook: cisco_bandwidth.yml
+- import_playbook: clear_ip_ospf_process.yml
+- import_playbook: verification1.yml
+- import_playbook: verification2.yml
+- import_playbook: verification3.yml
+- import_playbook: verification4.yml
+- import_playbook: verification5.yml
+- import_playbook: verification6.yml
+- import_playbook: verification7.yml

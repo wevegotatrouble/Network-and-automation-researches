@@ -1,0 +1,30 @@
+---
+ospf_processes:
+  - process_id: 1
+    router_id: 1.1.1.1
+    reference_bandwidth: 1000000
+    passive_interface: Ethernet 0/0
+    networks:
+      - address: 10.16.1.254
+        area: '0'
+        wildcard_bits: 0.0.0.0
+      - address: 10.1.1.1
+        area: '0'
+        wildcard_bits: 0.0.0.0
+      - address: 1.1.1.128
+        area: '0'
+        wildcard_bits: 0.0.0.127
+ospf_interfaces:
+  - name: Loopback0
+    network_type: point-to-point
+    area: '0'
+    process_id: '1'
+  - name: Ethernet0/0
+  - name: Ethernet0/1
+    priority: '10'
+  - name: Ethernet0/2
+  - name: Ethernet0/3
+interfaces:
+  - name: Loopback0
+    ip: 1.1.1.250
+    subnet_mask: 255.255.255.128

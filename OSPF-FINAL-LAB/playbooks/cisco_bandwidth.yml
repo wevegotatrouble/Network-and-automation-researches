@@ -1,0 +1,11 @@
+---
+- name: Assign new OSPF configurations
+  hosts: OSPF-SINGLE-AREA
+  gather_facts: false
+  tasks:
+    - name: Time berfore assigning bandwidth
+      pause:
+        seconds: 5
+    - name: change bandwidth in R5 e0/0 to have path through R4-R6
+      cisco.ios.ios_config:
+        lines: "{{ lookup('template', 'bandwidth_cisco.j2') }}"

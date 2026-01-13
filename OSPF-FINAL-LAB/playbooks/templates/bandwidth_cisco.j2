@@ -1,0 +1,7 @@
+{% for intf in ospf_interfaces %}
+{% if intf.bandwidth is undefined %}
+{% else %}
+interface {{ intf.name }}
+  bandwidth {{ intf.bandwidth }}
+{% endif %}
+{% endfor %}

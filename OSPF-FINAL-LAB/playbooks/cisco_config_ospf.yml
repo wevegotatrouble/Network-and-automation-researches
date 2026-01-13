@@ -1,0 +1,48 @@
+---
+- name: Assign new OSPF configurations
+  hosts: OSPF-SINGLE-AREA
+  gather_facts: false
+  tasks:
+    - name: commit new OSPF config for interfaces priorities
+      cisco.ios.ios_ospf_interfaces:
+        config:
+          - name: "{{ item.name}}"
+            address_family:
+              - afi: ipv4
+                priority: "{{ item.priority }}"
+        state: merged
+      loop: "{{ ospf_interfaces| default([]) }}"
+      when: item.priority is defined
+    - name: Assign OSPF area and process ID for interfaces
+      cisco.ios.ios_ospf_interfaces:
+        config:
+          - name: "{{ item.name }}"
+            address_family:
+              - afi: ipv4
+                process:
+                  id: "{{ item.process_id }}"
+                  area_id: "{{ item.area }}"
+        state: merged
+      loop: "{{ ospf_interfaces| default([]) }}"
+      when: [item.area is defined, item.process_id is defined]
+    - name: Change network type for point-to-point interfaces
+      cisco.ios.ios_ospf_interfaces:
+        config:
+          - name: "{{ item.name }}"
+            address_family:
+              - afi: ipv4
+                network:
+                  point_to_point: true
+        state: merged
+      loop: "{{ ospf_interfaces| default([]) }}"
+      when:
+        - item.network_type is defined
+        - item.network_type == "point-to-point"
+    - name: Change hello and dead intervals
+      cisco.ios.ios_config:
+        lines: "{{ lookup('template', 'ospf_interval.j2') }}"
+    #- name: change bandwidth in R5 e0/0 to have path through R4-R6
+    #  cisco.ios.ios_config:
+    #    lines: ['interface {{ item.name }}', 'bandwidth {{ item.bandwidth }}']
+    #  loop: '{{ ospf_interfaces| default([]) }}'
+    #  when: item.bandwidth is defined

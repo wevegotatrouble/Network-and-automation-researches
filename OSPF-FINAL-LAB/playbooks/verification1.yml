@@ -1,0 +1,17 @@
+---
+- name: Show ospf neighbors on R3
+  hosts: R3
+  gather_facts: false
+  tasks:
+    - name: Run show ip ospf neighbor command on R3
+      cisco.ios.ios_command:
+        commands:
+          - command: show ip ospf neighbor
+      register: output
+    - name: The show ip ospf neighbor command on R3 must show that R1 is the DR
+        on network 10.1.1.0/24.
+      debug:
+        var: output
+    - name: Time to check a verification
+      pause:
+        seconds: 10

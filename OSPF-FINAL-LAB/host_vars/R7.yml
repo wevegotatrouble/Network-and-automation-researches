@@ -1,0 +1,17 @@
+---
+ospf_processes:
+  - process_id: 34
+    reference_bandwidth: 1000000
+    router_id: 7.7.7.7
+    networks:
+      - address: 10.0.0.0
+        area: '0'
+        wildcard_bits: 0.255.255.255
+ospf_interfaces:
+  - name: Loopback0
+  - name: Ethernet0/0
+  - name: Ethernet0/1
+  - name: Ethernet0/2
+  - name: Ethernet0/3
+    hello_interval: 1
+    dead_interval: 4
