@@ -1,0 +1,6 @@
+[NAT-Lab]
+NAT ansible_host=192.168.47.244
+Google ansible_host=192.168.47.140
+PC1 ansible_host=192.168.47.36
+PC2 ansible_host=192.168.47.208
+PC3 ansible_host=192.168.47.104

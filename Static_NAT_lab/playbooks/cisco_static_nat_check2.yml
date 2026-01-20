@@ -1,0 +1,16 @@
+---
+- name: Ping from the Server to the PCs
+  hosts: Google
+  gather_facts: false
+  tasks:
+    - name: Ping the PCs
+      cisco.ios.ios_ping:
+        dest: 10.1.1.{{ item }}
+      with_sequence: start=1 end=3
+      register: output
+    - name: show ping output
+      debug:
+        var: output
+    - name: Time to check a ping's output from the server
+      pause:
+        seconds: 10

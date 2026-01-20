@@ -1,0 +1,25 @@
+---
+- name: Ping from PCs to Server
+  hosts: PC1,PC2,PC3
+  gather_facts: false
+  tasks:
+    - name: Ping the server
+      cisco.ios.ios_ping:
+        dest: 8.8.8.8
+      register: output
+    - name: show ping output
+      debug:
+        var: output
+    - name: Check a ping's output
+      pause:
+        seconds: 10
+    - name: Ping the server after ARP processing
+      cisco.ios.ios_ping:
+        dest: 8.8.8.8
+      register: output0
+    - name: show ping output
+      debug:
+        var: output0
+    - name: Check a ping's output again
+      pause:
+        seconds: 10
