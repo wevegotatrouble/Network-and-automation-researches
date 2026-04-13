@@ -1,0 +1,8 @@
+---
+- name: HSRP interface configuration for DSW1
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Delete all HSRP configs
+      cisco.ios.hsrp_interfaces:
+        state: deleted

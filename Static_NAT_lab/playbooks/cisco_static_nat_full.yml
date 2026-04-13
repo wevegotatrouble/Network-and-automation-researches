@@ -1,4 +1,0 @@
----
-- import_playbook: cisco_static_nat.yml
-- import_playbook: cisco_static_nat_check1.yml
-- import_playbook: cisco_static_nat_check2.yml

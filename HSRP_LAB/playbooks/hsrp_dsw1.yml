@@ -1,0 +1,39 @@
+---
+- name: HSRP interface configuration for DSW1
+  hosts: DSW1
+  gather_facts: false
+  tasks:
+    - name: HSRP configs for standby 10 group
+      cisco.ios.ios_hsrp_interfaces:
+        config:
+          - name: Ethernet0/0.10
+            standby_options:
+              - group_no: 10
+                ip:
+                  - virtual_ip: 10.10.1.1
+                preempt:
+                  enabled: true
+                priority: 110
+                timers:
+                  hello_interval: 1
+                  hold_time: 3
+                track:
+                  - decrement: 50
+                    track_no: 10
+            version: 1
+    - name: HSRP configs for standby 20 group
+      cisco.ios.ios_hsrp_interfaces:
+        # state: rendered
+        config:
+          - name: Ethernet0/0.20
+            standby_options:
+              - group_no: 20
+                ip:
+                  - virtual_ip: 10.20.1.1
+                preempt:
+                  enabled: true
+                priority: 90
+                timers:
+                  hello_interval: 2
+                  hold_time: 6
+            version: 2

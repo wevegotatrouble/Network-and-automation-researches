@@ -1,0 +1,5 @@
+[HSRP-Lab]
+SRV1 ansible_host=<<type your ip>>
+SRV2 ansible_host=<<type your ip>>
+DSW1 ansible_host=<<type your ip>>
+DSW2 ansible_host=<<type your ip>>

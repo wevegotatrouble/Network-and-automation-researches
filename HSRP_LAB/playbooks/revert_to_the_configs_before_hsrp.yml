@@ -1,0 +1,4 @@
+---
+- import_playbook: hsrp_delete_configs.yml
+- import_playbook: unshutdown_port.yml
+- import_playbook: interfaces_without_hsrp_settings.yml

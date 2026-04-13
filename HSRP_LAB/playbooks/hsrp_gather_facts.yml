@@ -1,0 +1,12 @@
+---
+- name: Gather HSRP facts
+  hosts: DSW1, DSW2
+  gather_facts: true
+  tasks:
+    - name: Gather HSRP facts
+      cisco.ios.ios_hsrp_interfaces:
+        state: gathered
+      register: hsrp_facts
+    - name: Debug gathered state
+      debug:
+        var: hsrp_facts

@@ -1,0 +1,16 @@
+---
+- name: Show standby configs
+  hosts: DSW2
+  gather_facts: false
+  tasks:
+    - name: Run show standby
+      cisco.ios.ios_command:
+        commands:
+          - command: show standby
+      register: output
+    - name: show standby
+      debug:
+        msg: '{{ output.stdout_lines[0] }}'
+    - name: Time to check configs
+      pause:
+        seconds: 20

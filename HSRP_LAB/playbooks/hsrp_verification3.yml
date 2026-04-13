@@ -1,0 +1,17 @@
+---
+- name: Show standby configs
+  hosts: DSW2
+  gather_facts: false
+  tasks:
+    - name: Run show standby
+      cisco.ios.ios_command:
+        commands:
+          - command: show standby
+      register: output
+    - name: show standby
+      debug:
+        msg: '{{ output.stdout_lines[0] }}'
+    - name: If DSW1's eth0/1 uplink is shut down, DSW2 must immediately become the
+        Active router for group 10.
+      pause:
+        seconds: 20

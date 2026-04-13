@@ -1,0 +1,27 @@
+---
+- name: Ping and traceroute External Server
+  hosts: SRV2
+  gather_facts: false
+  tasks:
+    - name: Ping
+      cisco.ios.ios_ping:
+        dest: 10.32.1.100
+      register: output
+    - name: show ping output
+      debug:
+        var: output
+    - name: Time to check a ping's output
+      pause:
+        seconds: 20
+    - name: traceroute External Server
+      cisco.ios.ios_command:
+        commands: traceroute 10.32.1.100
+        # wait_for: result[0] contains 10.32.1.1
+      register: output0
+    - name: show traceroute output
+      debug:
+        var: output0.stdout_lines[0]
+    - name: Traceroute from SRV2 (10.20.1.100) to EXT1(10.32.1.100) must go via
+        the path DSW2-R4-EXT1.
+      pause:
+        seconds: 20

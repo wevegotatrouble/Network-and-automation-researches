@@ -1,0 +1,8 @@
+---
+- name: Show standby configs
+  hosts: DSW1
+  gather_facts: false
+  tasks:
+    - name: Run show standby
+      cisco.ios.ios_config:
+        lines: [track 10 interface Ethernet0/1 line-protocol]

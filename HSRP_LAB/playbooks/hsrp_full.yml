@@ -1,0 +1,10 @@
+---
+- import_playbook: hsrp_dsw1.yml
+- import_playbook: hsrp_dsw2.yml
+- import_playbook: hsrp_track.yml
+- import_playbook: hsrp_chk1.yml
+- import_playbook: hsrp_chk2.yml
+- import_playbook: hsrp_verification1.yml
+- import_playbook: hsrp_verification2.yml
+- import_playbook: uplink_trigger.yml
+- import_playbook: hsrp_verification3.yml
