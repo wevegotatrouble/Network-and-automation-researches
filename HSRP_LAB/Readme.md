@@ -39,10 +39,12 @@ Requirement 1: Configure a resilient default gateway address in Vlans 10. Use HS
 
 ### Playbooks' structure
 
-![[Pasted image 20260413123408.png]]
+<img width="504" height="408" alt="image" src="https://github.com/user-attachments/assets/f58d8a74-3c9b-4dab-9e1c-7ae470d4874f" />
+
 
 - You will run hsrp_full.yml for our lab, which consists the following playbooks
-  ![[Pasted image 20260413123614.png]]
+  <img width="290" height="259" alt="image" src="https://github.com/user-attachments/assets/22d1332d-355e-43c2-b45d-a9e14ba75c80" />
+
 - If you want to use `cisco.ios.ios_config` instead of `cisco.ios.ios_hsrp_interfaces`, use `hsrp_dsw1_ver2.yml` and `hsrp_dsw2_ver2.yml` instead of `hsrp_dsw1.yml`, `hsrp_dsw2.yml`
 - In case to try out other setting I created `interfaces_without_hsrp_settings.yml` what deletes HSRP settings and up interface Ethernet0/1 in DSW1
 
