@@ -1,0 +1,9 @@
+---
+- name: HSRP interface configuration for DSW1
+  hosts: DSW1
+  gather_facts: false
+  tasks:
+    - name: Enable interface Ethernet0/1 for DSW1
+      cisco.ios.ios_config:
+        lines: [no shutdown]
+        parents: interface Ethernet0/1
