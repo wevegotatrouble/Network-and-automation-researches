@@ -1,0 +1,19 @@
+---
+- name: Show vrrp configs
+  hosts: DSW1
+  gather_facts: false
+  tasks:
+    - name: Waiting for VRRP ending its negotiation
+      pause:
+        seconds: 40
+    - name: Run show vrrp
+      cisco.ios.ios_command:
+        commands:
+          - command: show vrrp
+      register: output
+    - name: show vrrp
+      debug:
+        msg: '{{ output.stdout_lines[0] }}'
+    - name: Time to check configs
+      pause:
+        seconds: 20

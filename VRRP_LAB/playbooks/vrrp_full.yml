@@ -1,0 +1,15 @@
+---
+- import_playbook: vrrp_dsw1.yml
+- import_playbook: vrrp_dsw2.yml
+- import_playbook: vrrp_track_dsw1.yml
+- import_playbook: vrrp_track_dsw2.yml
+- import_playbook: vrrp_chk1.yml
+- import_playbook: vrrp_chk2.yml
+- import_playbook: vrrp_verification1.yml
+- import_playbook: vrrp_verification2.yml
+- import_playbook: uplink_trigger_dsw1.yml
+- import_playbook: vrrp_verification3.yml
+- import_playbook: unshutdown_port_dsw1.yml
+- import_playbook: uplink_trigger_dsw2.yml
+- import_playbook: vrrp_verification4.yml
+- import_playbook: unshutdown_port_dsw2.yml

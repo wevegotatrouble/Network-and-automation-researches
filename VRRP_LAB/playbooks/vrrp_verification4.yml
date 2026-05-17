@@ -1,0 +1,17 @@
+---
+- name: Show vrrp configs
+  hosts: DSW1
+  gather_facts: false
+  tasks:
+    - name: Run show vrrp
+      cisco.ios.ios_command:
+        commands:
+          - command: show vrrp
+      register: output
+    - name: show vrrp
+      debug:
+        msg: '{{ output.stdout_lines[0] }}'
+    - name: If DSW2's eth0/1 uplink is shut down, DSW1 must immediately become the
+        Active router for group 20.
+      pause:
+        seconds: 20

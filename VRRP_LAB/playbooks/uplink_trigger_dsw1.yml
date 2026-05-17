@@ -1,0 +1,11 @@
+---
+- name: Show standby configs
+  hosts: DSW1
+  gather_facts: false
+  tasks:
+    - name: Run show standby
+      cisco.ios.ios_config:
+        lines: [interface Ethernet 0/1, shutdown]
+    - name: Time for Active Router changing
+      pause:
+        seconds: 10

@@ -1,0 +1,9 @@
+---
+- name: VRRP interface configuration for DSW1
+  hosts: DSW1
+  gather_facts: false
+  tasks:
+    - name: VRRP configs for vrrp 10 group
+      cisco.ios.ios_config:
+        lines: [no shutdown]
+        parents: interface Ethernet0/1
