@@ -108,7 +108,7 @@ def yaml_files_checker():
 
 def jinja_files_checker():
 
-    p = Path.cwd()
+    p = Path.cwd() # Same things we do for the jinja templates. We parse the directory for the files which we need
     if list(p.rglob("*.jinja")) or list(p.rglob("*.j2")):
         for j in jinja_exts:
             jinja_files = list(p.rglob(j))
@@ -122,6 +122,8 @@ def jinja_files_checker():
         )
 
 def config_creator():
+    # The following function created for parsing between yaml properties and templates
+    # And makes config automatically
     for a in yamlFiles:
         env = Environment(loader=FileSystemLoader("templates"),trim_blocks=True,lstrip_blocks=True)
         # Reading YAML data from file
@@ -159,6 +161,7 @@ def config_creator():
             print(f"Your config file for {device_stem} is ready")
 
 def countdown():
+    # This counter created for the main menu to make the main menu more attractive
     t = 5
     while t:
         mins, secs = divmod(t, 60)
