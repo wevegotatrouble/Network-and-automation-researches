@@ -1,0 +1,124 @@
+---
+hostname: ASW-A3
+secret: jeremysitlab
+username: cisco
+user_secret: ccna
+exec_timeout: 30 0
+interfaces:
+  - name: GigabitEthernet0/1
+    switchport: True
+    switchport_mode: trunk
+    native_vlan: 1000
+    allowed_vlans: 10,20,40,99
+    dtp_mode: False
+    snooping_trust: True
+    arp_inspection_trust: True
+  - name: GigabitEthernet0/2
+    switchport: True
+    switchport_mode: trunk
+    native_vlan: 1000
+    allowed_vlans: 10,20,40,99
+    dtp_mode: False
+    snooping_trust: True
+    arp_inspection_trust: True
+  - name: GigabitEthernet0/2
+  - name: FastEthernet0/1
+    switchport: True
+    switchport_mode: access
+    vlan: 10
+    voice: True
+    portfast: True
+    bpduguard: True
+    dtp_mode: False
+    lldp_transmit: False
+    port_security: True
+    maximum: 2
+    mac_addr: sticky
+    violation_mode: restrict
+    snooping_limit: 15
+  - name: FastEthernet0/2
+    shutdown: True
+  - name: FastEthernet0/3
+    shutdown: True
+  - name: FastEthernet0/4
+    shutdown: True
+  - name: FastEthernet0/5
+    shutdown: True
+  - name: FastEthernet0/6
+    shutdown: True
+  - name: FastEthernet0/7
+    shutdown: True
+  - name: FastEthernet0/8
+    shutdown: True
+  - name: FastEthernet0/9
+    shutdown: True
+  - name: FastEthernet0/10
+    shutdown: True
+  - name: FastEthernet0/11
+    shutdown: True
+  - name: FastEthernet0/12
+    shutdown: True
+  - name: FastEthernet0/13
+    shutdown: True
+  - name: FastEthernet0/14
+    shutdown: True
+  - name: FastEthernet0/15
+    shutdown: True
+  - name: FastEthernet0/16
+    shutdown: True
+  - name: FastEthernet0/17
+    shutdown: True
+  - name: FastEthernet0/18
+    shutdown: True
+  - name: FastEthernet0/19
+    shutdown: True
+  - name: FastEthernet0/20
+    shutdown: True
+  - name: FastEthernet0/21
+    shutdown: True
+  - name: FastEthernet0/22
+    shutdown: True
+  - name: FastEthernet0/23
+    shutdown: True
+  - name: FastEthernet0/24
+    shutdown: True
+  - name: Vlan99
+    ip: 10.0.0.6
+    subnet_mask: 255.255.255.240
+    gateway: 10.0.0.1
+
+vtp_version: 2
+vtp_mode: client
+vtp_domain: JeremysITLab
+
+vlans:
+  - number: 10
+    name: PCs
+    priority: 0
+  - number: 20
+    name: Phones
+    priority: 4096
+  - number: 40
+    name: Wi-Fi
+    priority: 4096
+  - number: 99
+    name: Management
+    priority: 0
+
+domain_name: jeremysitlab.com
+server_ip: 10.5.0.4
+ntp_key: ccna
+router_server: 10.0.0.76
+snmp_pass: SNMPSTRING
+syslog_level: debugging
+syslog_buffer: 8192
+
+ssh_ver: 2
+rsa: 4096
+access_lists:
+  - name: 1
+    where_accept: vty
+    filter: in
+    rules:
+      - permit 10.1.0.0 0.0.0.255
+      - deny any

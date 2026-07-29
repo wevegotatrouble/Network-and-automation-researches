@@ -1,0 +1,145 @@
+enable
+config t
+hostname {{ hostname }}
+enable algorithm-type scrypt secret {{ secret }}
+username {{ username }} algorithm-type scrypt secret {{ user_secret }}
+line con 0
+ exec-timeout {{ exec_timeout }}
+ logging synchronous
+ login local
+ exit 
+
+ip routing
+
+{% for interface in interfaces %}
+{% if interface.channel_group is undefined %}
+{% else %}
+interface {{ interface.name }}
+ channel-group 1 mode {{ interface.channel_group }}
+ exit
+{% endif %}
+{% if interface.switchport is defined %}
+{% if interface.switchport == False %}
+interface {{ interface.name }}
+ no switchport
+ ip address {{ interface.ip }} {{ interface.subnet_mask}}
+ ip ospf network point-to-point
+ no shutdown
+ exit
+{% else %}
+interface {{ interface.name }}
+ switchport mode {{ interface.switchport_mode}} 
+ switchport {{ interface.switchport_mode}} native vlan {{ interface.native_vlan }}
+ switchport {{ interface.switchport_mode}} allowed vlan {{ interface.allowed_vlans }}
+ switchport nonegotiate
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if interface.shutdown is undefined %}
+{% else %}
+interface {{ interface.name }}
+ shutdown
+ exit
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{%- if 'Loopback' in interface.name %}
+interface {{ interface.name }}
+ ip address {{ interface.ip }} {{ interface.subnet_mask}}
+ exit
+{%- elif 'Vlan' in interface.name %}
+interface {{ interface.name }}
+ ip address {{ interface.ip }} {{ interface.subnet_mask}}
+ ip helper-address 10.0.0.76
+ standby version {{ interface.hrrp_version }}
+ standby {{ interface.hrrp_group }} ip {{ interface.hrrp_ip }}
+{% if interface.hrrp_preemption == True %}
+ standby {{ interface.hrrp_group }} preempt 
+{% if interface.hrrp_priority is number %}
+ standby {{ interface.hrrp_group }} priority {{ interface.hrrp_priority }}
+{% endif %}
+{% endif %}
+ exit
+{% endif %}
+{% endfor %}  
+do write
+vtp version {{ vtp_version }}
+vtp domain {{ vtp_domain }}
+vtp mode {{ vtp_mode }}
+router ospf 1
+{% for interface in interfaces %}
+{% if interface.ip is defined %}
+ network {{ interface.ip }} 0.0.0.0 area 0
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if 'Loopback' in interface.name %}
+ passive-interface {{ interface.name }}
+ router-id {{ interface.ip }}
+{% elif 'Vlan' in interface.name %}
+ passive-interface {{ interface.name }}
+{% endif %}
+{% endfor %}  
+ exit
+
+ip domain-name {{ domain_name }}
+ip domain-lookup
+ip name-server {{ server_ip }}
+
+ntp authentication-key 1 md5 {{ ntp_key }}
+ntp trusted-key 1
+ntp server {{ router_server }} key 1
+ntp master 5
+ntp update-calendar
+ntp authenticate
+do wr
+
+spanning-tree mode rapid-pvst
+ 
+{% for vlan in vlans %}
+vlan {{ vlan.number }}
+ name {{ vlan.name }}
+ exit
+spanning-tree vlan {{ vlan.number }} priority {{ vlan.priority }}
+{% endfor %}  
+
+snmp-server community {{ snmp_pass }} ro
+do wr
+
+logging trap {{ syslog_level }}
+logging buffered {{ syslog_buffer }}
+logging {{ server_ip }}
+
+no cdp run
+lldp run
+
+ip ssh version {{ ssh_ver }}
+crypto key generate rsa 
+{{ rsa }}
+{% for list in access_lists %}
+{% if list.name is number %}
+{% for rule in list.rules %}
+access-list {{ list.name }} {{ rule }}
+{% endfor %}  
+
+line {{ list.where_accept }} 0 15
+ access-class {{ list.name }}  {{ list.filter }}
+ logging synchronous
+ login local
+ transport input ssh
+ exit
+
+{% else %}
+interface {{ list.where_accept }}
+ ip access-group {{ list.name }} {{ list.filter }}
+ exit
+ip access-list extended {{ list.name }} 
+{% for rule in list.rules %}
+ {{ rule }}
+{% endfor %}  
+ exit
+{% endif %}
+{% endfor %}  
+do wr

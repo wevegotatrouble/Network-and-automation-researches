@@ -1,0 +1,170 @@
+enable
+config t
+hostname {{ hostname }}
+enable secret {{ secret }}
+username {{ username }} secret {{ user_secret }}
+line con 0
+ exec-timeout {{ exec_timeout }}
+ logging synchronous
+ login local
+ exit 
+{% for interface in interfaces %}
+{% if interface.ip == dhcp %}
+interface {{ interface.name }}
+ ip address dhcp
+ no shutdown
+ exit
+{% else %}
+interface {{ interface.name }}
+ ip address {{ interface.ip }} {{ interface.subnet_mask }}
+ no shutdown
+ exit
+{% endif %}
+{% endfor %}  
+do write
+
+router ospf 1
+{% for interface in interfaces %}
+{%- if 'Loopback' in interface.name %}
+ passive-interface {{ interface.name }}
+ router-id {{ interface.ip }}
+ default-information originate
+{%- endif %}
+{% endfor %}  
+ exit
+
+{% for interface in interfaces %}
+{% if interface.ospf is defined %}
+{% if interface.ospf == True %}
+interface {{ interface.name }}
+ ip ospf 1 area 0
+ ip ospf network point-to-point
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+
+ip route 0.0.0.0 0.0.0.0 {{ default_route }} 
+ip route 0.0.0.0 0.0.0.0 {{ second_default_route }} 2
+
+{% for pool in dhcp_pools %}
+ip dhcp excluded-address {{ pool.exclude_1st }} {{ pool.exclude_last }}
+{% endfor %}  
+
+{% for pool in dhcp_pools %}
+ip dhcp pool {{ pool.name }}
+ network {{ pool.network_ip }} {{ pool.network_subnet }}
+ default-router {{ pool.default_router }}
+ dns-server {{ pool.dns_server }}
+ domain-name {{ pool.domain_name }}
+{% if pool.option_43 == True %}
+ option 43 ip 10.0.0.7
+ exit
+{% else %}
+ exit
+{% endif %}
+{% endfor %}  
+
+ip domain-name {{ domain_name }}
+ip domain-lookup
+ip name-server {{ server_ip }}
+
+ntp authentication-key 1 md5 {{ ntp_key }}
+ntp trusted-key 1
+ntp server {{ ntp_server }}
+ntp master 5
+ntp update-calendar
+ntp authenticate
+do wr
+
+snmp-server community {{ snmp_pass }} ro
+do wr
+
+logging trap {{ syslog_level }}
+logging buffered {{ syslog_buffer }}
+logging {{ server_ip }}
+
+ip ftp username {{ ftp_username }}
+ip ftp password {{ ftp_password }}
+
+no cdp run
+lldp run
+
+ip ssh version {{ ssh_ver }}
+crypto key generate rsa general-keys modulus {{ rsa }}
+{% for interface in interfaces %}
+{% if interface.nat is defined %}
+{% if 'outside' in interface.nat %}
+interface {{ interface.name }}
+ ip nat outside
+ exit
+{% else %}
+interface {{ interface.name }}
+ ip nat inside
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+
+ip nat inside source static {{ server_ip }} {{ nat_static_ip }}
+{% for pool in nat_pools %}
+ip nat pool {{ pool.name }} {{ pool.ip_1st }} {{ pool.ip_last }} netmask {{ pool.netmask }}
+{% endfor %}  
+{% for list in access_lists %}
+{% if 'vty' in list.where_accept %}
+{% for rule in list.rules %}
+access-list {{ list.name }} {{ rule }}
+{% endfor %}  
+
+line {{ list.where_accept }} 0 15
+ access-class {{ list.name }}  {{ list.filter }}
+ logging synchronous
+ login local
+ transport input ssh
+ exit
+
+{% else %}
+{% for rule in list.rules %}
+access-list {{ list.name }} {{ rule }}
+{% endfor %}  
+{% for pool in nat_pools %}
+ip nat inside source list {{ list.name }} pool {{ pool.name }} overload
+{% endfor %}  
+{% endif %}
+{% endfor %}  
+
+ipv6 unicast-routing
+{% for interface in interfaces %}
+{% if interface.ipv6 is defined %}
+{% if interface.eui_64 == False %}
+interface {{ interface.name }}
+ ipv6 address {{ interface.ipv6 }}
+ exit
+{% else %}
+interface {{ interface.name }}
+ ipv6 address {{ interface.ipv6 }} eui-64
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+
+ipv6 route ::/0 2001:DB8:A::1
+ipv6 route ::/0 GigabitEthernet0/1/0 2001:DB8:B::1 2
+do wr
+
+##Delete hashtags and paste after all config the first part
+#do copy ftp: flash:
+#{{ server_ip }}
+#{{ new_image }}
+#
+##Delete hashtags and paste after the first part the second one
+#boot system flash:{{ new_image }}
+#do wr
+#do reload
+#
+##Delete hashtags and paste after the third part the second one
+#do delete flash:{{ old_image }}
+#
+#
+#do wr
+

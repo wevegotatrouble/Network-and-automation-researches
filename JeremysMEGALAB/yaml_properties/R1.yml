@@ -1,0 +1,144 @@
+---
+hostname: R1
+secret: jeremysitlab
+username: cisco
+user_secret: ccna
+exec_timeout: 30 0
+interfaces:
+  - name: GigabitEthernet0/0/0
+    ip: dhcp
+    nat: outside
+    ipv6: 2001:DB8:A::2/64
+    eui_64: False
+  - name: GigabitEthernet0/1/0
+    ip: dhcp
+    nat: outside
+    ipv6: 2001:DB8:B::2/64
+    eui_64: False
+  - name: GigabitEthernet0/0
+    ip: 10.0.0.33
+    subnet_mask: 255.255.255.252
+    ipv6: 2001:DB8:A1::/64
+    eui_64: True
+    ospf: True
+    nat: inside
+  - name: GigabitEthernet0/1
+    ip: 10.0.0.37
+    subnet_mask: 255.255.255.252
+    ipv6: 2001:DB8:A2::/64
+    eui_64: True
+    ospf: True
+    nat: inside
+  - name: Loopback0
+    ip: 10.0.0.76
+    subnet_mask: 255.255.255.255
+    ospf: True
+
+default_route: 203.0.113.1
+second_default_route: 203.0.113.5
+
+dhcp_pools:
+  - name: A-Mgmt
+    network_ip: 10.0.0.0
+    network_subnet: 255.255.255.240
+    default_router: 10.0.0.1
+    dns_server: 10.5.0.4
+    domain_name: jeremysitlab.com
+    option_43: True
+    exclude_1st: 10.0.0.1
+    exclude_last: 10.0.0.10
+  - name: A-PC
+    network_ip: 10.1.0.0
+    network_subnet: 255.255.255.0
+    default_router: 10.1.0.1
+    dns_server: 10.5.0.4
+    domain_name: jeremysitlab.com
+    option_43: False
+    exclude_1st: 10.1.0.1
+    exclude_last: 10.1.0.10
+  - name: A-Phone
+    network_ip: 10.2.0.0
+    network_subnet: 255.255.255.0
+    default_router: 10.2.0.1
+    dns_server: 10.5.0.4
+    domain_name: jeremysitlab.com
+    option_43: False
+    exclude_1st: 10.2.0.1
+    exclude_last: 10.2.0.10
+  - name: B-Mgmt
+    network_ip: 10.0.0.16
+    network_subnet: 255.255.255.240
+    default_router: 10.0.0.17
+    dns_server: 10.5.0.4
+    domain_name: jeremysitlab.com
+    option_43: True
+    exclude_1st: 10.0.0.17
+    exclude_last: 10.0.0.26
+  - name: B-PC
+    network_ip: 10.3.0.0
+    network_subnet: 255.255.255.0
+    default_router: 10.3.0.1
+    dns_server: 10.5.0.4
+    domain_name: jeremysitlab.com
+    option_43: False
+    exclude_1st: 10.3.0.1
+    exclude_last: 10.3.0.10
+  - name: B-Phone
+    network_ip: 10.4.0.0
+    network_subnet: 255.255.255.0
+    default_router: 10.4.0.1
+    dns_server: 10.5.0.4
+    domain_name: jeremysitlab.com
+    option_43: False
+    exclude_1st: 10.4.0.1
+    exclude_last: 10.4.0.10
+  - name: Wi-Fi
+    network_ip: 10.6.0.0
+    network_subnet: 255.255.255.0
+    default_router: 10.6.0.1
+    dns_server: 10.5.0.4
+    domain_name: jeremysitlab.com
+    option_43: False
+    exclude_1st: 10.6.0.1
+    exclude_last: 10.6.0.10
+
+domain_name: jeremysitlab.com
+server_ip: 10.5.0.4
+ntp_key: ccna
+ntp_server: 216.239.35.0
+snmp_pass: SNMPSTRING
+syslog_level: debugging
+syslog_buffer: 8192
+ftp_username: cisco
+ftp_password: cisco
+
+ssh_ver: 2
+rsa: 4096
+access_lists:
+  - name: 1
+    where_accept: vty
+    filter: in
+    rules:
+      - permit 10.1.0.0 0.0.0.255
+      - deny any
+  - name: 2
+    where_accept: nat
+    filter: in
+    rules:
+      - permit 10.1.0.0 0.0.0.255
+      - permit 10.2.0.0 0.0.0.255
+      - permit 10.3.0.0 0.0.0.255
+      - permit 10.4.0.0 0.0.0.255
+      - permit 10.5.0.0 0.0.0.255
+      - permit 10.6.0.0 0.0.0.255
+      - deny any
+nat_static_ip: 203.0.113.113
+nat_pools:
+  - name: POOL1
+    ip_1st: 203.0.113.200
+    ip_last: 203.0.113.207
+    netmask: 255.255.255.248
+    static_ip: 203.0.113.100
+
+new_image: c2900-universalk9-mz.SPA.155-3.M4a.bin
+old_image: c2900-universalk9-mz.SPA.151-4.M4.bin

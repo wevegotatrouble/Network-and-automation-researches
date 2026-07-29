@@ -1,0 +1,240 @@
+enable
+config t
+hostname DSW-A1
+enable algorithm-type scrypt secret jeremysitlab
+username cisco algorithm-type scrypt secret ccna
+line con 0
+ exec-timeout 30 0
+ logging synchronous
+ login local
+ exit 
+
+ip routing
+
+interface GigabitEthernet1/0/1
+ switchport mode trunk 
+ switchport trunk native vlan 1000
+ switchport trunk allowed vlan 10,20,40,99
+ switchport nonegotiate
+ exit
+interface GigabitEthernet1/0/2
+ switchport mode trunk 
+ switchport trunk native vlan 1000
+ switchport trunk allowed vlan 10,20,40,99
+ switchport nonegotiate
+ exit
+interface GigabitEthernet1/0/3
+ switchport mode trunk 
+ switchport trunk native vlan 1000
+ switchport trunk allowed vlan 10,20,40,99
+ switchport nonegotiate
+ exit
+interface GigabitEthernet1/0/4
+ channel-group 1 mode desirable
+ exit
+interface GigabitEthernet1/0/5
+ channel-group 1 mode desirable
+ exit
+interface GigabitEthernet1/1/1
+ no switchport
+ ip address 10.0.0.46 255.255.255.252
+ ip ospf network point-to-point
+ no shutdown
+ exit
+interface GigabitEthernet1/1/2
+ no switchport
+ ip address 10.0.0.62 255.255.255.252
+ ip ospf network point-to-point
+ no shutdown
+ exit
+interface Port-channel1
+ switchport mode trunk 
+ switchport trunk native vlan 1000
+ switchport trunk allowed vlan 10,20,40,99
+ switchport nonegotiate
+ exit
+  
+interface GigabitEthernet1/0/6
+ shutdown
+ exit
+interface GigabitEthernet1/0/7
+ shutdown
+ exit
+interface GigabitEthernet1/0/8
+ shutdown
+ exit
+interface GigabitEthernet1/0/9
+ shutdown
+ exit
+interface GigabitEthernet1/0/10
+ shutdown
+ exit
+interface GigabitEthernet1/0/11
+ shutdown
+ exit
+interface GigabitEthernet1/0/12
+ shutdown
+ exit
+interface GigabitEthernet1/0/13
+ shutdown
+ exit
+interface GigabitEthernet1/0/14
+ shutdown
+ exit
+interface GigabitEthernet1/0/15
+ shutdown
+ exit
+interface GigabitEthernet1/0/16
+ shutdown
+ exit
+interface GigabitEthernet1/0/17
+ shutdown
+ exit
+interface GigabitEthernet1/0/18
+ shutdown
+ exit
+interface GigabitEthernet1/0/19
+ shutdown
+ exit
+interface GigabitEthernet1/0/20
+ shutdown
+ exit
+interface GigabitEthernet1/0/21
+ shutdown
+ exit
+interface GigabitEthernet1/0/22
+ shutdown
+ exit
+interface GigabitEthernet1/0/23
+ shutdown
+ exit
+interface GigabitEthernet1/0/24
+ shutdown
+ exit
+interface GigabitEthernet1/1/3
+ shutdown
+ exit
+interface GigabitEthernet1/1/4
+ shutdown
+ exit
+  
+interface Vlan99
+ ip address 10.0.0.2 255.255.255.240
+ ip helper-address 10.0.0.76
+ standby version 2
+ standby 1 ip 10.0.0.1
+ standby 1 preempt 
+ standby 1 priority 105
+ exit
+interface Vlan10
+ ip address 10.1.0.2 255.255.255.0
+ ip helper-address 10.0.0.76
+ standby version 2
+ standby 2 ip 10.1.0.1
+ standby 2 preempt 
+ standby 2 priority 105
+ exit
+interface Vlan20
+ ip address 10.2.0.2 255.255.255.0
+ ip helper-address 10.0.0.76
+ standby version 2
+ standby 3 ip 10.2.0.1
+ exit
+interface Vlan40
+ ip address 10.6.0.2 255.255.255.0
+ ip helper-address 10.0.0.76
+ standby version 2
+ standby 4 ip 10.6.0.1
+ exit
+interface Loopback0
+ ip address 10.0.0.79 255.255.255.255
+ exit  
+do write
+vtp version 2
+vtp domain JeremysITLab
+vtp mode server
+router ospf 1
+ network 10.0.0.46 0.0.0.0 area 0
+ network 10.0.0.62 0.0.0.0 area 0
+ network 10.0.0.2 0.0.0.0 area 0
+ network 10.1.0.2 0.0.0.0 area 0
+ network 10.2.0.2 0.0.0.0 area 0
+ network 10.6.0.2 0.0.0.0 area 0
+ network 10.0.0.79 0.0.0.0 area 0
+  
+ passive-interface Vlan99
+ passive-interface Vlan10
+ passive-interface Vlan20
+ passive-interface Vlan40
+ passive-interface Loopback0
+ router-id 10.0.0.79
+  
+ exit
+
+ip domain-name jeremysitlab.com
+ip domain-lookup
+ip name-server 10.5.0.4
+
+ntp authentication-key 1 md5 ccna
+ntp trusted-key 1
+ntp server 10.0.0.76 key 1
+ntp master 5
+ntp update-calendar
+ntp authenticate
+do wr
+
+spanning-tree mode rapid-pvst
+ 
+vlan 10
+ name PCs
+ exit
+spanning-tree vlan 10 priority 0
+vlan 20
+ name Phones
+ exit
+spanning-tree vlan 20 priority 4096
+vlan 40
+ name Wi-Fi
+ exit
+spanning-tree vlan 40 priority 4096
+vlan 99
+ name Management
+ exit
+spanning-tree vlan 99 priority 0
+  
+
+snmp-server community SNMPSTRING ro
+do wr
+
+logging trap debugging
+logging buffered 8192
+logging 10.5.0.4
+
+no cdp run
+lldp run
+
+ip ssh version 2
+crypto key generate rsa 
+4096
+access-list 1 permit 10.1.0.0 0.0.0.255
+access-list 1 deny any
+  
+
+line vty 0 15
+ access-class 1  in
+ logging synchronous
+ login local
+ transport input ssh
+ exit
+
+interface vlan10
+ ip access-group OfficeA_to_OfficeB in
+ exit
+ip access-list extended OfficeA_to_OfficeB 
+ permit icmp 10.1.0.0 0.0.0.255 10.3.0.0 0.0.0.255
+ deny ip 10.1.0.0 0.0.0.255 10.3.0.0 0.0.0.255
+ permit ip any any
+  
+ exit
+  
+do wr

@@ -1,0 +1,224 @@
+enable
+config t
+hostname ASW-A1
+enable secret jeremysitlab
+username cisco secret ccna
+line con 0
+ exec-timeout 30 0
+ logging synchronous
+ login local
+ exit 
+
+interface GigabitEthernet0/1
+ switchport mode trunk 
+ switchport trunk native vlan 1000
+ switchport trunk allowed vlan 10,20,40,99
+ switchport nonegotiate
+ exit
+interface GigabitEthernet0/2
+ switchport mode trunk 
+ switchport trunk native vlan 1000
+ switchport trunk allowed vlan 10,20,40,99
+ switchport nonegotiate
+ exit
+interface FastEthernet0/1
+ switchport mode access 
+ switchport access vlan 99
+ switchport nonegotiate
+ exit
+interface FastEthernet0/2
+ switchport mode trunk 
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 40,99
+ switchport nonegotiate
+ exit
+  
+interface Vlan99
+ ip address 10.0.0.4 255.255.255.240
+ exit
+ip default-gateway 10.0.0.1
+  
+interface FastEthernet0/3
+ shutdown
+ exit
+interface FastEthernet0/4
+ shutdown
+ exit
+interface FastEthernet0/5
+ shutdown
+ exit
+interface FastEthernet0/6
+ shutdown
+ exit
+interface FastEthernet0/7
+ shutdown
+ exit
+interface FastEthernet0/8
+ shutdown
+ exit
+interface FastEthernet0/9
+ shutdown
+ exit
+interface FastEthernet0/10
+ shutdown
+ exit
+interface FastEthernet0/11
+ shutdown
+ exit
+interface FastEthernet0/12
+ shutdown
+ exit
+interface FastEthernet0/13
+ shutdown
+ exit
+interface FastEthernet0/14
+ shutdown
+ exit
+interface FastEthernet0/15
+ shutdown
+ exit
+interface FastEthernet0/16
+ shutdown
+ exit
+interface FastEthernet0/17
+ shutdown
+ exit
+interface FastEthernet0/18
+ shutdown
+ exit
+interface FastEthernet0/19
+ shutdown
+ exit
+interface FastEthernet0/20
+ shutdown
+ exit
+interface FastEthernet0/21
+ shutdown
+ exit
+interface FastEthernet0/22
+ shutdown
+ exit
+interface FastEthernet0/23
+ shutdown
+ exit
+interface FastEthernet0/24
+ shutdown
+ exit
+  
+interface FastEthernet0/1
+ spanning-tree portfast
+ exit
+interface FastEthernet0/2
+ spanning-tree portfast trunk
+ exit
+  
+interface FastEthernet0/1
+ spanning-tree bpduguard enable
+ exit
+interface FastEthernet0/2
+ spanning-tree bpduguard enable
+ exit
+  
+ip domain-name jeremysitlab.com
+ip domain-lookup
+ip name-server 10.5.0.4
+
+ntp authentication-key 1 md5 ccna
+ntp trusted-key 1
+ntp server 10.0.0.76 key 1
+ntp master 5
+ntp update-calendar
+ntp authenticate
+do wr
+
+spanning-tree mode rapid-pvst
+
+vlan 10
+ name PCs
+ exit
+spanning-tree vlan 10 priority 0
+vlan 20
+ name Phones
+ exit
+spanning-tree vlan 20 priority 4096
+vlan 40
+ name Wi-Fi
+ exit
+spanning-tree vlan 40 priority 4096
+vlan 99
+ name Management
+ exit
+spanning-tree vlan 99 priority 0
+  
+
+vtp version 2
+vtp domain JeremysITLab
+vtp mode client
+
+snmp-server community SNMPSTRING ro
+do wr
+
+logging trap debugging
+logging buffered 8192
+logging 10.5.0.4
+
+no cdp run
+lldp run
+
+ip ssh version 2
+crypto key generate rsa general-keys modulus 4096
+access-list 1 permit 10.1.0.0 0.0.0.255
+access-list 1 deny any
+  
+line vty 0 15
+ access-class 1  in
+ logging synchronous
+ login local
+ transport input ssh
+ exit
+
+  
+interface FastEthernet0/1
+ no lldp transmit
+ exit
+  
+interface FastEthernet0/1
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+ exit
+  
+ip dhcp snooping
+ip dhcp snooping vlan 10
+ip arp inspection vlan 10
+ip dhcp snooping vlan 20
+ip arp inspection vlan 20
+ip dhcp snooping vlan 40
+ip arp inspection vlan 40
+ip dhcp snooping vlan 99
+ip arp inspection vlan 99
+no ip dhcp snooping information option
+ip arp inspection validate src-mac dst-mac ip
+interface FastEthernet0/1
+ ip dhcp snooping limit rate 15
+ exit
+interface FastEthernet0/2
+ ip dhcp snooping limit rate 100
+ exit
+  
+interface GigabitEthernet0/1
+ ip dhcp snooping trust
+ exit
+interface GigabitEthernet0/2
+ ip dhcp snooping trust
+ exit
+  
+interface GigabitEthernet0/1
+ ip arp inspection trust
+ exit
+interface GigabitEthernet0/2
+ ip arp inspection trust
+ exit
+  
+do wr

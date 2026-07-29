@@ -1,0 +1,120 @@
+enable
+config t
+hostname {{ hostname }}
+enable algorithm-type scrypt secret {{ secret }}
+username {{ username }} algorithm-type scrypt secret {{ user_secret }}
+line con 0
+ exec-timeout {{ exec_timeout }}
+ logging synchronous
+ login local
+ exit 
+
+ip routing
+
+{% for interface in interfaces %}
+{% if interface.channel_group is undefined %}
+{% else %}
+interface {{ interface.name }}
+ channel-group 1 mode {{ interface.channel_group }}
+ exit
+{% endif %}
+{% if interface.switchport is defined %}
+{% if interface.switchport == False %}
+interface {{ interface.name }}
+ no switchport
+ ip address {{ interface.ip }} {{ interface.subnet_mask}}
+ ip ospf network point-to-point
+ no shutdown
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if interface.shutdown is undefined %}
+{% else %}
+interface {{ interface.name }}
+ shutdown
+ exit
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if 'Loopback' in interface.name %}
+interface {{ interface.name }}
+ ip address {{ interface.ip }} {{ interface.subnet_mask}}
+ exit
+{% endif %}
+{% endfor %}  
+
+do write
+
+router ospf 1
+{% for interface in interfaces %}
+{% if interface.ip is defined %}
+ network {{ interface.ip }} 0.0.0.0 area 0
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{%- if 'Loopback' in interface.name %}
+ passive-interface {{ interface.name }}
+ router-id {{ interface.ip }}
+{%- endif %}
+{% endfor %}  
+ exit
+
+
+ip domain-name {{ domain_name }}
+ip domain-lookup
+ip name-server {{ server_ip }}
+
+ntp authentication-key 1 md5 {{ ntp_key }}
+ntp trusted-key 1
+ntp server {{ router_server }} key 1
+ntp master 5
+ntp update-calendar
+ntp authenticate
+do wr
+
+snmp-server community {{ snmp_pass }} ro
+do wr
+
+
+logging trap {{ syslog_level }}
+logging buffered {{ syslog_buffer }}
+logging {{ server_ip }}
+
+no cdp run
+lldp run
+
+ip ssh version {{ ssh_ver }}
+crypto key generate rsa 
+{{ rsa }}
+{% for list in access_lists %}
+access-list {{ list.name }} permit {{ list.permit_address }}
+access-list {{ list.name }} deny {{ list.deny_address }}
+{% endfor %}  
+
+line vty 0 15
+ access-class 1 in
+ logging synchronous
+ login local
+ transport input ssh
+ exit
+
+
+ipv6 unicast-routing
+{% for interface in interfaces %}
+{% if interface.ipv6 is defined %}
+{% if interface.ipv6 == True %}
+interface {{ interface.name }}
+ ipv6 enable
+ exit
+{% else %}
+interface {{ interface.name }}
+ ipv6 address {{ interface.ipv6 }} eui-64
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+
+do wr
+

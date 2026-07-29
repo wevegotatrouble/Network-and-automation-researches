@@ -1,0 +1,97 @@
+---
+hostname: CSW2
+secret: jeremysitlab
+username: cisco
+user_secret: ccna
+exec_timeout: 30 0
+interfaces:
+  - name: GigabitEthernet1/0/1
+    switchport: False
+    ip: 10.0.0.38
+    ipv6: 2001:DB8:A2::/64
+    subnet_mask: 255.255.255.252
+  - name: GigabitEthernet1/0/2
+    channel_group: desirable
+  - name: GigabitEthernet1/0/3
+    channel_group: desirable
+  - name: GigabitEthernet1/0/4
+    shutdown: True
+  - name: GigabitEthernet1/0/5
+    shutdown: True
+  - name: GigabitEthernet1/0/6
+    shutdown: True
+  - name: GigabitEthernet1/0/7
+    shutdown: True
+  - name: GigabitEthernet1/0/8
+    shutdown: True
+  - name: GigabitEthernet1/0/9
+    shutdown: True
+  - name: GigabitEthernet1/0/10
+    shutdown: True
+  - name: GigabitEthernet1/0/11
+    shutdown: True
+  - name: GigabitEthernet1/0/12
+    shutdown: True
+  - name: GigabitEthernet1/0/13
+    shutdown: True
+  - name: GigabitEthernet1/0/14
+    shutdown: True
+  - name: GigabitEthernet1/0/15
+    shutdown: True
+  - name: GigabitEthernet1/0/16
+    shutdown: True
+  - name: GigabitEthernet1/0/17
+    shutdown: True
+  - name: GigabitEthernet1/0/18
+    shutdown: True
+  - name: GigabitEthernet1/0/19
+    shutdown: True
+  - name: GigabitEthernet1/0/20
+    shutdown: True
+  - name: GigabitEthernet1/0/21
+    shutdown: True
+  - name: GigabitEthernet1/0/22
+    shutdown: True
+  - name: GigabitEthernet1/0/23
+    shutdown: True
+  - name: GigabitEthernet1/0/24
+    shutdown: True
+  - name: GigabitEthernet1/1/1
+    switchport: False
+    ip: 10.0.0.61
+    subnet_mask: 255.255.255.252
+  - name: GigabitEthernet1/1/2
+    switchport: False
+    ip: 10.0.0.65
+    subnet_mask: 255.255.255.252
+  - name: GigabitEthernet1/1/3
+    switchport: False
+    ip: 10.0.0.69
+    subnet_mask: 255.255.255.252
+  - name: GigabitEthernet1/1/4
+    switchport: False
+    ip: 10.0.0.73
+    subnet_mask: 255.255.255.252
+  - name: Port-channel1
+    switchport: False
+    ip: 10.0.0.42
+    ipv6: True
+    subnet_mask: 255.255.255.252
+  - name: Loopback0
+    ip: 10.0.0.78
+    subnet_mask: 255.255.255.255
+
+domain_name: jeremysitlab.com
+server_ip: 10.5.0.4
+ntp_key: ccna
+router_server: 10.0.0.76
+snmp_pass: SNMPSTRING
+syslog_level: debugging
+syslog_buffer: 8192
+
+ssh_ver: 2
+rsa: 4096
+access_lists:
+  - name: 1
+    permit_address: 10.1.0.0 0.0.0.255
+    deny_address: any

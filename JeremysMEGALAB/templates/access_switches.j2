@@ -1,0 +1,188 @@
+enable
+config t
+hostname {{ hostname }}
+enable secret {{ secret }}
+username {{ username }} secret {{ user_secret }}
+line con 0
+ exec-timeout {{ exec_timeout }}
+ logging synchronous
+ login local
+ exit 
+
+{% for interface in interfaces %}
+{% if interface.switchport is defined %}
+{% if interface.switchport_mode == 'trunk' %}
+interface {{ interface.name }}
+ switchport mode {{ interface.switchport_mode }} 
+ switchport {{ interface.switchport_mode }} native vlan {{ interface.native_vlan }}
+ switchport {{ interface.switchport_mode}} allowed vlan {{ interface.allowed_vlans }}
+ switchport nonegotiate
+ exit
+{% elif interface.switchport_mode == 'access' %}
+interface {{ interface.name }}
+ switchport mode {{ interface.switchport_mode }} 
+{% if interface.voice is defined %}
+ switchport voice vlan 20
+{% endif %}
+{% if interface.vlan is defined %}
+ switchport {{ interface.switchport_mode }} vlan {{ interface.vlan}}
+ switchport nonegotiate
+ exit
+{% endif %}
+{% endif %}
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if 'Vlan' in interface.name %}
+interface {{ interface.name }}
+ ip address {{ interface.ip }} {{ interface.subnet_mask}}
+ exit
+ip default-gateway {{ interface.gateway }}
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if interface.shutdown is undefined %}
+{% else %}
+interface {{ interface.name }}
+ shutdown
+ exit
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if interface.portfast is defined %}
+{% if interface.portfast == True %}
+{% if interface.switchport_mode == 'trunk' %}
+interface {{ interface.name }}
+ spanning-tree portfast trunk
+ exit
+{% else %}
+interface {{ interface.name }}
+ spanning-tree portfast
+ exit
+{% endif %}
+{% endif %}
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if interface.bpduguard is defined %}
+{% if interface.bpduguard == True %}
+interface {{ interface.name }}
+ spanning-tree bpduguard enable
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+ip domain-name {{ domain_name }}
+ip domain-lookup
+ip name-server {{ server_ip }}
+
+ntp authentication-key 1 md5 {{ ntp_key }}
+ntp trusted-key 1
+ntp server {{ router_server }} key 1
+ntp master 5
+ntp update-calendar
+ntp authenticate
+do wr
+
+spanning-tree mode rapid-pvst
+
+{% for vlan in vlans %}
+vlan {{ vlan.number }}
+ name {{ vlan.name }}
+ exit
+spanning-tree vlan {{ vlan.number }} priority {{ vlan.priority }}
+{% endfor %}  
+
+vtp version {{ vtp_version }}
+vtp domain {{ vtp_domain }}
+vtp mode {{ vtp_mode }}
+
+snmp-server community {{ snmp_pass }} ro
+do wr
+
+logging trap {{ syslog_level }}
+logging buffered {{ syslog_buffer }}
+logging {{ server_ip }}
+
+no cdp run
+lldp run
+
+ip ssh version {{ ssh_ver }}
+crypto key generate rsa general-keys modulus {{ rsa }}
+{% for list in access_lists %}
+{% if list.name is number %}
+{% for rule in list.rules %}
+access-list {{ list.name }} {{ rule }}
+{% endfor %}  
+line {{ list.where_accept }} 0 15
+ access-class {{ list.name }}  {{ list.filter }}
+ logging synchronous
+ login local
+ transport input ssh
+ exit
+
+{% else %}
+interface {{ list.where_accept }}
+ ip access-group {{ list.name }} {{ list.filter }}
+ exit
+ip access-list extended {{ list.name }} 
+{% for rule in list.rules %}
+ {{ rule }}
+ exit
+{% endfor %}  
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if interface.lldp_transmit is defined %}
+{% if interface.lldp_transmit == False %}
+interface {{ interface.name }}
+ no lldp transmit
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if interface.port_security is defined %}
+{% if interface.port_security == True %}
+interface {{ interface.name }}
+ switchport port-security
+ switchport port-security maximum {{ interface.maximum }}
+ switchport port-security mac-address {{ interface.mac_addr }}
+ switchport port-security violation {{ interface.violation_mode }}
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+ip dhcp snooping
+{% for vlan in vlans %}
+ip dhcp snooping vlan {{ vlan.number }}
+ip arp inspection vlan {{ vlan.number }}
+{% endfor %}
+no ip dhcp snooping information option
+ip arp inspection validate src-mac dst-mac ip
+{% for interface in interfaces %}
+{% if interface.snooping_limit is defined %}
+interface {{ interface.name }}
+ ip dhcp snooping limit rate {{ interface.snooping_limit }}
+ exit
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if interface.snooping_trust is defined %}
+{% if interface.snooping_trust == True %}
+interface {{ interface.name }}
+ ip dhcp snooping trust
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+{% for interface in interfaces %}
+{% if interface.arp_inspection_trust is defined %}
+{% if interface.arp_inspection_trust == True %}
+interface {{ interface.name }}
+ ip arp inspection trust
+ exit
+{% endif %}
+{% endif %}
+{% endfor %}  
+do wr
